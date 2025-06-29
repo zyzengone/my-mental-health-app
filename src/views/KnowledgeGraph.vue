@@ -19,12 +19,13 @@
 
 <script>
 import * as d3 from 'd3';
+import { getAllDisease } from "../api/knowledge.js";
+
 
 export default {
   data() {
     return {
       searchQuery: '',
-
       nodes: [
         { id: 'Disease1', name:'抑郁', label: '疾病' },
         { id: 'Symptom1',name:'抓狂', label: '症状' },
@@ -39,27 +40,17 @@ export default {
         { source: 'Disease2', target: 'Symptom2', relate: 'has_symptom' },
         { source: 'Disease2', target: 'Drug2', relate: 'common_drug' },
       ],
-      // Mock 数据
-      mockData: {
-        nodes: [
-          { id: 'Disease1', name:'抑郁', label: '疾病' },
-          { id: 'Symptom1',name:'抓狂', label: '症状' },
-          { id: 'Drug1',name:'药', label: '药物' },
-          { id: 'Disease2', name:'焦虑', label: '疾病' },
-          { id: 'Symptom2',name:'抓狂2', label: '症状' },
-          { id: 'Drug2',name:'药2', label: '药物' },
-        ],
-        links: [
-          { source: 'Disease1', target: 'Symptom1', type: 'has_symptom' },
-          { source: 'Disease1', target: 'Drug1', type: 'common_drug' },
-          { source: 'Disease2', target: 'Symptom2', type: 'has_symptom' },
-          { source: 'Disease2', target: 'Drug2', type: 'common_drug' },
-        ],
-      },
     };
   },
   mounted() {
-    this.drawChart();
+    getAllDisease().then(res => {
+      this.originalNodes = res.nodes;
+      this.originalLinks = res.links;
+      this.nodes = this.originalNodes;
+      this.links = this.originalLinks;
+      this.drawChart()
+    })
+
   },
   methods: {
     drawChart() {
@@ -68,9 +59,16 @@ export default {
         links: this.links
       };
 
-      const width = 600;
-      const height = 400;
-
+      // 定义颜色映射
+      const colorMap = {
+        'disease': '#e3716e',
+        'symptom': '#54b1aa',
+        '药物': 'green'
+      };
+      const width = 1000;
+      const height = 600;
+      // 清除之前的图表
+      d3.select(this.$refs.chart).selectAll('*').remove();
       // 创建SVG容器
       const svg = d3.select(this.$refs.chart)
           .append('svg')
@@ -98,11 +96,11 @@ export default {
           .append('g')
           .attr('class', 'node')
           .style('fill', 'black');
+
       node.append('circle')
           .attr('r', 18)
-          .attr('fill', 'steelblue')
-          .style('fill', 'orange')
-          .call(d3.drag() //节点拖拽
+          .attr('fill', d => colorMap[d.label]) // 根据 label 设置颜色
+          .call(d3.drag() // 节点拖拽
               .on('start', dragstarted)
               .on('drag', dragged)
               .on('end', dragended));
@@ -164,8 +162,33 @@ export default {
       }
     },
     filterGraph() {
-      // 实现过滤逻辑，根据 searchQuery 过滤 nodes 和 links
+      const query = this.searchQuery.toLowerCase();
+      const matchedNodes = this.originalNodes.filter(node =>
+          node.name.toLowerCase().includes(query) ||
+          node.label.toLowerCase().includes(query)
+      );
 
+      // 获取与匹配节点有关系的所有节点
+      const relatedNodes = new Set(matchedNodes.map(node => node.id));
+      const originMatchNodes = new Set(relatedNodes)
+      console.log(matchedNodes)
+      this.originalLinks.forEach(link => {
+        if (originMatchNodes.has(link.source.id)) {
+          relatedNodes.add(link.target.id);
+        }
+      });
+      console.log(relatedNodes)
+      const filteredNodes = this.originalNodes.filter(node => relatedNodes.has(node.id));
+
+      // 更新边的 source 和 target 为节点对象
+      const filteredLinks = this.originalLinks
+          .filter(link => originMatchNodes.has(link.source.id) && relatedNodes.has(link.target.id));
+      console.log(filteredNodes)
+      console.log(filteredLinks)
+      this.nodes = filteredNodes;
+      this.links = filteredLinks;
+
+      this.drawChart();
     },
   },
 };

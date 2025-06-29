@@ -42,9 +42,10 @@ export default {
 
 .card {
   cursor: pointer;
-  height: 150px;
-  margin-bottom: 20px;
+  height: 100px;
+  margin-bottom: 200px;
   display: flex;
+  padding: 100px;
   align-items: center;
   justify-content: center;
 }

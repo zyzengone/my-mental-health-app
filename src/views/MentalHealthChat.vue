@@ -24,6 +24,7 @@
 </template>
 
 <script>
+import { useUserStore } from "../store/index.js";
 export default {
   data() {
     return {
@@ -38,6 +39,8 @@ export default {
         text: this.inputMessage,
         avatar: 'your-avatar-url',
       });
+      console.log('发送消息:', this.inputMessage);
+      useUserStore.incrementConversationCount();
       this.inputMessage = '';
     },
   },

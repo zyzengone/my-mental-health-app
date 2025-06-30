@@ -1,0 +1,636 @@
+{
+    "nodes": [
+        {
+            "id": "S9",
+            "name": "Hyperactivity_agitation",
+            "label": "symptom"
+        },
+        {
+            "id": "S28",
+            "name": "more_talktive",
+            "label": "symptom"
+        },
+        {
+            "id": "S10",
+            "name": "Impulsivity",
+            "label": "symptom"
+        },
+        {
+            "id": "S11",
+            "name": "Inattention",
+            "label": "symptom"
+        },
+        {
+            "id": "S30",
+            "name": "panic_fear",
+            "label": "symptom"
+        },
+        {
+            "id": "S2",
+            "name": "Autonomic_symptoms",
+            "label": "symptom"
+        },
+        {
+            "id": "S35",
+            "name": "somatic_symptoms_others",
+            "label": "symptom"
+        },
+        {
+            "id": "S8",
+            "name": "Genitourinary_symptoms",
+            "label": "symptom"
+        },
+        {
+            "id": "S24",
+            "name": "fears_of_being_negatively_evaluated",
+            "label": "symptom"
+        },
+        {
+            "id": "S33",
+            "name": "sleep_disturbance",
+            "label": "symptom"
+        },
+        {
+            "id": "S32",
+            "name": "poor_memory",
+            "label": "symptom"
+        },
+        {
+            "id": "S0",
+            "name": "Anger_Irritability",
+            "label": "symptom"
+        },
+        {
+            "id": "S5",
+            "name": "Decreased_energy_tiredness_fatigue",
+            "label": "symptom"
+        },
+        {
+            "id": "S1",
+            "name": "Anxious_Mood",
+            "label": "symptom"
+        },
+        {
+            "id": "S22",
+            "name": "fear_about_social_situations",
+            "label": "symptom"
+        },
+        {
+            "id": "S6",
+            "name": "Depressed_Mood",
+            "label": "symptom"
+        },
+        {
+            "id": "S36",
+            "name": "somatic_symptoms_sensory",
+            "label": "symptom"
+        },
+        {
+            "id": "S13",
+            "name": "Respiratory_symptoms",
+            "label": "symptom"
+        },
+        {
+            "id": "S34",
+            "name": "somatic_muscle",
+            "label": "symptom"
+        },
+        {
+            "id": "S3",
+            "name": "Cardiovascular_symptoms",
+            "label": "symptom"
+        },
+        {
+            "id": "S7",
+            "name": "Gastrointestinal_symptoms",
+            "label": "symptom"
+        },
+        {
+            "id": "S14",
+            "name": "Suicidal_ideas",
+            "label": "symptom"
+        },
+        {
+            "id": "S27",
+            "name": "loss_of_interest_or_motivation",
+            "label": "symptom"
+        },
+        {
+            "id": "S20",
+            "name": "do_things_easily_get_painful_consequences",
+            "label": "symptom"
+        },
+        {
+            "id": "S25",
+            "name": "flight_of_ideas",
+            "label": "symptom"
+        },
+        {
+            "id": "S21",
+            "name": "drastical_shift_in_mood_and_energy",
+            "label": "symptom"
+        },
+        {
+            "id": "S15",
+            "name": "Worthlessness_and_guilty",
+            "label": "symptom"
+        },
+        {
+            "id": "S37",
+            "name": "weight_and_appetite_change",
+            "label": "symptom"
+        },
+        {
+            "id": "S31",
+            "name": "pessimism",
+            "label": "symptom"
+        },
+        {
+            "id": "S12",
+            "name": "Indecisiveness",
+            "label": "symptom"
+        },
+        {
+            "id": "S17",
+            "name": "compensatory_behaviors_to_prevent_weight_gain",
+            "label": "symptom"
+        },
+        {
+            "id": "S19",
+            "name": "diminished_emotional_expression",
+            "label": "symptom"
+        },
+        {
+            "id": "S29",
+            "name": "obsession",
+            "label": "symptom"
+        },
+        {
+            "id": "S23",
+            "name": "fear_of_gaining_weight",
+            "label": "symptom"
+        },
+        {
+            "id": "S18",
+            "name": "compulsions",
+            "label": "symptom"
+        },
+        {
+            "id": "S16",
+            "name": "avoidance_of_stimuli",
+            "label": "symptom"
+        },
+        {
+            "id": "S26",
+            "name": "intrusion_symptoms",
+            "label": "symptom"
+        },
+        {
+            "id": "S4",
+            "name": "Catatonic_behavior",
+            "label": "symptom"
+        },
+        {
+            "id": "D0",
+            "name": "adhd",
+            "label": "disease"
+        },
+        {
+            "id": "D1",
+            "name": "anxiety",
+            "label": "disease"
+        },
+        {
+            "id": "D2",
+            "name": "bipolar_disorder",
+            "label": "disease"
+        },
+        {
+            "id": "D3",
+            "name": "depression",
+            "label": "disease"
+        },
+        {
+            "id": "D4",
+            "name": "eating_disorder",
+            "label": "disease"
+        },
+        {
+            "id": "D5",
+            "name": "ocd",
+            "label": "disease"
+        },
+        {
+            "id": "D6",
+            "name": "ptsd",
+            "label": "disease"
+        }
+    ],
+    "links": [
+        {
+            "source": "D0",
+            "target": "S28",
+            "relate": "cause"
+        },
+        {
+            "source": "D0",
+            "target": "S11",
+            "relate": "cause"
+        },
+        {
+            "source": "D0",
+            "target": "S9",
+            "relate": "cause"
+        },
+        {
+            "source": "D0",
+            "target": "S10",
+            "relate": "cause"
+        },
+        {
+            "source": "D1",
+            "target": "S33",
+            "relate": "cause"
+        },
+        {
+            "source": "D1",
+            "target": "S1",
+            "relate": "cause"
+        },
+        {
+            "source": "D1",
+            "target": "S13",
+            "relate": "cause"
+        },
+        {
+            "source": "D1",
+            "target": "S3",
+            "relate": "cause"
+        },
+        {
+            "source": "D1",
+            "target": "S6",
+            "relate": "cause"
+        },
+        {
+            "source": "D1",
+            "target": "S9",
+            "relate": "cause"
+        },
+        {
+            "source": "D1",
+            "target": "S0",
+            "relate": "cause"
+        },
+        {
+            "source": "D1",
+            "target": "S5",
+            "relate": "cause"
+        },
+        {
+            "source": "D1",
+            "target": "S11",
+            "relate": "cause"
+        },
+        {
+            "source": "D1",
+            "target": "S7",
+            "relate": "cause"
+        },
+        {
+            "source": "D1",
+            "target": "S24",
+            "relate": "cause"
+        },
+        {
+            "source": "D1",
+            "target": "S32",
+            "relate": "cause"
+        },
+        {
+            "source": "D1",
+            "target": "S8",
+            "relate": "cause"
+        },
+        {
+            "source": "D1",
+            "target": "S36",
+            "relate": "cause"
+        },
+        {
+            "source": "D1",
+            "target": "S34",
+            "relate": "cause"
+        },
+        {
+            "source": "D1",
+            "target": "S30",
+            "relate": "cause"
+        },
+        {
+            "source": "D1",
+            "target": "S2",
+            "relate": "cause"
+        },
+        {
+            "source": "D1",
+            "target": "S35",
+            "relate": "cause"
+        },
+        {
+            "source": "D1",
+            "target": "S22",
+            "relate": "cause"
+        },
+        {
+            "source": "D2",
+            "target": "S6",
+            "relate": "cause"
+        },
+        {
+            "source": "D2",
+            "target": "S9",
+            "relate": "cause"
+        },
+        {
+            "source": "D2",
+            "target": "S25",
+            "relate": "cause"
+        },
+        {
+            "source": "D2",
+            "target": "S15",
+            "relate": "cause"
+        },
+        {
+            "source": "D2",
+            "target": "S5",
+            "relate": "cause"
+        },
+        {
+            "source": "D2",
+            "target": "S21",
+            "relate": "cause"
+        },
+        {
+            "source": "D2",
+            "target": "S27",
+            "relate": "cause"
+        },
+        {
+            "source": "D2",
+            "target": "S0",
+            "relate": "cause"
+        },
+        {
+            "source": "D2",
+            "target": "S37",
+            "relate": "cause"
+        },
+        {
+            "source": "D2",
+            "target": "S28",
+            "relate": "cause"
+        },
+        {
+            "source": "D2",
+            "target": "S33",
+            "relate": "cause"
+        },
+        {
+            "source": "D2",
+            "target": "S14",
+            "relate": "cause"
+        },
+        {
+            "source": "D2",
+            "target": "S20",
+            "relate": "cause"
+        },
+        {
+            "source": "D2",
+            "target": "S11",
+            "relate": "cause"
+        },
+        {
+            "source": "D3",
+            "target": "S11",
+            "relate": "cause"
+        },
+        {
+            "source": "D3",
+            "target": "S33",
+            "relate": "cause"
+        },
+        {
+            "source": "D3",
+            "target": "S27",
+            "relate": "cause"
+        },
+        {
+            "source": "D3",
+            "target": "S6",
+            "relate": "cause"
+        },
+        {
+            "source": "D3",
+            "target": "S31",
+            "relate": "cause"
+        },
+        {
+            "source": "D3",
+            "target": "S12",
+            "relate": "cause"
+        },
+        {
+            "source": "D3",
+            "target": "S14",
+            "relate": "cause"
+        },
+        {
+            "source": "D3",
+            "target": "S5",
+            "relate": "cause"
+        },
+        {
+            "source": "D3",
+            "target": "S9",
+            "relate": "cause"
+        },
+        {
+            "source": "D3",
+            "target": "S32",
+            "relate": "cause"
+        },
+        {
+            "source": "D3",
+            "target": "S0",
+            "relate": "cause"
+        },
+        {
+            "source": "D3",
+            "target": "S8",
+            "relate": "cause"
+        },
+        {
+            "source": "D3",
+            "target": "S37",
+            "relate": "cause"
+        },
+        {
+            "source": "D3",
+            "target": "S15",
+            "relate": "cause"
+        },
+        {
+            "source": "D4",
+            "target": "S33",
+            "relate": "cause"
+        },
+        {
+            "source": "D4",
+            "target": "S6",
+            "relate": "cause"
+        },
+        {
+            "source": "D4",
+            "target": "S17",
+            "relate": "cause"
+        },
+        {
+            "source": "D4",
+            "target": "S27",
+            "relate": "cause"
+        },
+        {
+            "source": "D4",
+            "target": "S15",
+            "relate": "cause"
+        },
+        {
+            "source": "D4",
+            "target": "S37",
+            "relate": "cause"
+        },
+        {
+            "source": "D4",
+            "target": "S24",
+            "relate": "cause"
+        },
+        {
+            "source": "D4",
+            "target": "S19",
+            "relate": "cause"
+        },
+        {
+            "source": "D4",
+            "target": "S29",
+            "relate": "cause"
+        },
+        {
+            "source": "D4",
+            "target": "S8",
+            "relate": "cause"
+        },
+        {
+            "source": "D4",
+            "target": "S23",
+            "relate": "cause"
+        },
+        {
+            "source": "D4",
+            "target": "S0",
+            "relate": "cause"
+        },
+        {
+            "source": "D5",
+            "target": "S29",
+            "relate": "cause"
+        },
+        {
+            "source": "D5",
+            "target": "S18",
+            "relate": "cause"
+        },
+        {
+            "source": "D5",
+            "target": "S1",
+            "relate": "cause"
+        },
+        {
+            "source": "D5",
+            "target": "S6",
+            "relate": "cause"
+        },
+        {
+            "source": "D6",
+            "target": "S26",
+            "relate": "cause"
+        },
+        {
+            "source": "D6",
+            "target": "S11",
+            "relate": "cause"
+        },
+        {
+            "source": "D6",
+            "target": "S1",
+            "relate": "cause"
+        },
+        {
+            "source": "D6",
+            "target": "S15",
+            "relate": "cause"
+        },
+        {
+            "source": "D6",
+            "target": "S4",
+            "relate": "cause"
+        },
+        {
+            "source": "D6",
+            "target": "S0",
+            "relate": "cause"
+        },
+        {
+            "source": "D6",
+            "target": "S20",
+            "relate": "cause"
+        },
+        {
+            "source": "D6",
+            "target": "S32",
+            "relate": "cause"
+        },
+        {
+            "source": "D6",
+            "target": "S31",
+            "relate": "cause"
+        },
+        {
+            "source": "D6",
+            "target": "S33",
+            "relate": "cause"
+        },
+        {
+            "source": "D6",
+            "target": "S2",
+            "relate": "cause"
+        },
+        {
+            "source": "D6",
+            "target": "S27",
+            "relate": "cause"
+        },
+        {
+            "source": "D6",
+            "target": "S16",
+            "relate": "cause"
+        },
+        {
+            "source": "D6",
+            "target": "S19",
+            "relate": "cause"
+        }
+    ]
+}

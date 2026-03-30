@@ -1,7 +1,7 @@
 // src/store/index.js
 import { createPinia, defineStore } from 'pinia'
 import { submitLogin } from "../api/user.js";
-import { updatePersonalityType } from "../api/user.js";
+import { updatePersonalityType, updateMBTIType } from "../api/user.js";
 import { getPersonalityType } from "../api/user.js";
 
 export const useUserStore = defineStore('user', {
@@ -40,7 +40,7 @@ export const useUserStore = defineStore('user', {
         incrementConversationCount() {
             console.log('每3次对话后获取人格类型')
             this.conversationCount++
-            if (this.conversationCount % 1 === 0) {
+            if (this.conversationCount % 3 === 0) {
                 this.updatePersonalityType()
                 console.log('每3次对话后获取人格类型')
             }
@@ -49,16 +49,28 @@ export const useUserStore = defineStore('user', {
             try {
                 const userId = localStorage.getItem('userId')
                 const response = await updatePersonalityType(userId)
-                this.personalityType = response.data
+                // 后端返回 { personalityType: "...", description: "..." }
+                this.personalityType = response.data?.personalityType || response.data
             } catch (error) {
                 console.error('获取人格类型失败:', error)
+            }
+        },
+        async updateMBTIType(mbtiType) {
+            try {
+                const userId = localStorage.getItem('userId')
+                const response = await updateMBTIType(userId, mbtiType)
+                this.personalityType = response.data
+                return response
+            } catch (error) {
+                console.error('更新MBTI类型失败:', error)
+                throw error
             }
         },
         async fetchPersonalityType() {
             try {
                 const userId = localStorage.getItem('userId')
                 const response = await getPersonalityType(userId)
-                this.personalityType = response.data.trim()
+                this.personalityType = response.data?.personalityType || response.data
                 console.log('获取人格类型成功:', this.personalityType)
             } catch (error) {
                 console.error('获取人格类型失败:', error)

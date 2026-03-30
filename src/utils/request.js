@@ -5,8 +5,7 @@ import { ElMessage } from 'element-plus'
 import {useRouter} from "vue-router";
 import {useUserStore} from "../store/index.js";
 
-const BASE_API='http://localhost:8080'
-// const BASE_API="http://mental.lmlzy.link:7397"
+const BASE_API=import.meta.env.VITE_API_URL || 'http://localhost:8080'
 // 创建axios实例
 const service = axios.create({
     baseURL: BASE_API, //所有的后端接口请求地址前缀部分(没有后端请求不用写)

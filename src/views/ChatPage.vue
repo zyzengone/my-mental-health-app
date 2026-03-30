@@ -84,6 +84,7 @@ const newConversation = async () => {
     loadConversations()
     // saveConversations();
     activeConversation.value = newConversation;
+    messages.value = [];  // 清空消息
     fetchMessages(newConversation.sessionId);
   } catch (error) {
     console.error('Failed to create conversation:', error);

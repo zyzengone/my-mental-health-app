@@ -16,7 +16,7 @@
             :body-style="{ padding: '20px', textAlign: 'center' }"
             @click.native="navigateTo('/knowledge-graph')"
         >
-          <div class="card-title">医疗知识图谱</div>
+          <div class="card-title">心理知识图谱</div>
         </el-card>
       </el-col>
     </el-row>

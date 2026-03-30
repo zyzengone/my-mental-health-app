@@ -4,6 +4,7 @@ import MentalHealthAssessment from '../views/MentalHealthChat.vue';
 import ChatPage from '../views/ChatPage.vue';
 import KnowledgeGraph from '../views/KnowledgeGraph.vue';
 import Login from "../views/Login.vue";
+import Register from "../views/Register.vue";
 import { ElMessage } from 'element-plus'
 
 const routes = [
@@ -35,6 +36,11 @@ const routes = [
         path: '/login',
         name: 'Login',
         component: Login
+    },
+    {
+        path: '/register',
+        name: 'Register',
+        component: Register
     },
     {
         path: '/profile',

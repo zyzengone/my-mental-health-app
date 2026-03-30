@@ -1,14 +1,17 @@
 <template>
   <el-container class="knowledge-graph-container">
-    <el-header>医疗知识图谱展示</el-header>
+    <el-header>
+      心理知识图谱展示
+      <el-input
+          placeholder="搜索疾病或症状"
+          v-model="searchQuery"
+          @input="filterGraph"
+          style="width: 300px; margin-left: 20px;"
+      />
+    </el-header>
     <el-main>
       <!-- 使用 D3.js 绘制的图形表示 -->
       <div ref="chart" className="ggraph"></div>
-      <el-input
-          placeholder="搜索疾病、症状或药物"
-          v-model="searchQuery"
-          @input="filterGraph"
-      />
     </el-main>
     <el-aside>
       <!-- 侧边栏，可以包含搜索框和过滤器 -->
@@ -44,11 +47,13 @@ export default {
   },
   mounted() {
     getAllDisease().then(res => {
-      this.originalNodes = res.nodes;
-      this.originalLinks = res.links;
-      this.nodes = this.originalNodes;
-      this.links = this.originalLinks;
-      this.drawChart()
+      if (res.code === 200) {
+        this.originalNodes = res.data.nodes;
+        this.originalLinks = res.data.links;
+        this.nodes = this.originalNodes;
+        this.links = this.originalLinks;
+        this.drawChart()
+      }
     })
 
   },
@@ -59,14 +64,15 @@ export default {
         links: this.links
       };
 
-      // 定义颜色映射
+      // 定义颜色映射（匹配 node.json 中的 label：symptom, disease）
       const colorMap = {
-        'disease': '#e3716e',
-        'symptom': '#54b1aa',
-        '药物': 'green'
+        'symptom': '#54b1aa',   // 症状 - 青色
+        'disease': '#e3716e',  // 疾病 - 红色
+        '药物': 'green'        // 备用
       };
-      const width = 1000;
-      const height = 600;
+      // 修改1: 增大画布尺寸
+      const width = 1500;
+      const height = 900;
       // 清除之前的图表
       d3.select(this.$refs.chart).selectAll('*').remove();
       // 创建SVG容器
@@ -77,10 +83,10 @@ export default {
 
       const g = svg.append('g'); // 将 g 元素放在 svg 元素内部
 
-      // 创建力导向图模拟器
+      // 修改2: 增加节点间距离和电荷力强度以减少重叠
       const simulation = d3.forceSimulation(data.nodes)
-          .force('link', d3.forceLink(data.links).id(d => d.id).distance(100))
-          .force('charge', d3.forceManyBody())
+          .force('link', d3.forceLink(data.links).id(d => d.id).distance(150))
+          .force('charge', d3.forceManyBody().strength(-300))
           .force('center', d3.forceCenter(width / 2, height / 2));
       // 创建边
       const link = g.selectAll('line')
@@ -95,11 +101,12 @@ export default {
           .enter()
           .append('g')
           .attr('class', 'node')
-          .style('fill', 'black');
+          .style('fill', d => colorMap[d.label] || '#999'); // 使用颜色映射
 
+      // 修改3: 增大节点半径
       node.append('circle')
-          .attr('r', 18)
-          .attr('fill', d => colorMap[d.label]) // 根据 label 设置颜色
+          .attr('r', 25)
+          .attr('fill', d => colorMap[d.label] || '#999') // 根据 label 设置颜色，默认为灰色
           .call(d3.drag() // 节点拖拽
               .on('start', dragstarted)
               .on('drag', dragged)
@@ -109,7 +116,8 @@ export default {
           .text(d => d.name)
           .attr('text-anchor', 'middle')
           .attr('dy', 4)
-          .attr('font-size', d => Math.min(2 * d.radius, 20))
+          // 修改4: 调整字体大小
+          .attr('font-size', d => Math.min(2 * 25, 8))
           .attr('fill', 'black')
           .style('pointer-events', 'none');
       // 连线文字

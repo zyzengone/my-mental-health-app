@@ -1,23 +1,26 @@
 <template>
   <div class="login-container">
-    <div class="welcome-message">欢迎使用心理健康支持服务平台</div>
+    <div class="welcome-message">欢迎注册心理健康评测系统</div>
     <el-card class="box-card">
       <template #header>
         <div class="card-header">
-          <span>用户登录</span>
+          <span>用户注册</span>
         </div>
       </template>
       <el-form :model="form" label-width="100px">
         <el-form-item label="用户名">
           <el-input v-model="form.username"></el-input>
         </el-form-item>
+        <el-form-item label="邮箱">
+          <el-input v-model="form.email" type="email"></el-input>
+        </el-form-item>
         <el-form-item label="密码">
           <el-input type="password" v-model="form.password"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">登录</el-button> 
-          <div class="register-link">
-            未注册？<router-link to="/register">请注册</router-link>
+          <el-button type="primary" @click="onSubmit">注册</el-button>
+          <div class="login-link">
+            已有账号？<router-link to="/login">立即登录</router-link>
           </div>
         </el-form-item>
       </el-form>
@@ -29,30 +32,35 @@
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
-import { useUserStore} from "../store/index.js";
+import { submitRegister } from '../api/user.js'
 
 const form = ref({
   username: '',
+  email: '',
   password: ''
 })
 
 const router = useRouter()
-const userStore = useUserStore()
 const onSubmit = async () => {
-  if (form.value.username && form.value.password) {
+  if (form.value.username && form.value.email && form.value.password) {
     try {
-      await userStore.login(form.value);
-      ElMessage.success('登录成功');
-      router.push('/chat');
+      let data = await submitRegister(form.value)
+      if (data.data >= 1) {
+        ElMessage.success('注册成功')
+        router.push('/login')
+      } else { 
+        ElMessage.error('用户已存在')
+      }
+
+
     } catch (error) {
-      console.error(error);
-      ElMessage.error('登录失败，请检查用户名和密码');
+      console.error(error)
+      ElMessage.error('注册失败，请稍后再试')
     }
   } else {
-    ElMessage.error('请输入用户名和密码');
+    ElMessage.error('请填写完整信息')
   }
 }
-
 </script>
 
 <style scoped>
@@ -112,16 +120,15 @@ const onSubmit = async () => {
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-.register-link {
+.login-link {
   margin-top: 10px;
   text-align: center;
   color: #666;
 }
 
-.register-link a {
+.login-link a {
   color: #FF8C00;
   text-decoration: none;
   font-weight: bold;
 }
 </style>
-

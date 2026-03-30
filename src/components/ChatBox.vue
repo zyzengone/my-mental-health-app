@@ -2,22 +2,22 @@
   <div class="chat-box">
     <div class="messages">
       <!-- 动态渲染消息列表 -->
-      <div class="message" v-for="msg in messages" :key="msg.timestamp" :class="{ 'my-message': msg.userFlag }">
-        <img :src="msg.userFlag ? myAvatar : robotAvatar" :hidden="msg.userFlag" alt="头像" class="avatar" />
-        <div class="bubble" :class="{ 'align-left': !msg.userFlag, 'align-right': msg.userFlag }">
+      <div class="message" v-for="msg in messages" :key="msg.id || msg.timestamp" :class="{ 'my-message': msg.role === 'user' }">
+        <img :src="msg.role === 'user' ? myAvatar : robotAvatar" :hidden="msg.role === 'user'" alt="头像" class="avatar" />
+        <div class="bubble" :class="{ 'align-left': msg.role === 'assistant', 'align-right': msg.role === 'user' }">
           <div class="content">
-            <template v-if="msg.message.startsWith('http:')">
-              <img :src="msg.message" alt="图片消息" class="image-message" width="100px" height="100px"/>
+            <template v-if="msg.content && msg.content.startsWith('http')">
+              <img :src="msg.content" alt="图片消息" class="image-message" width="100px" height="100px"/>
             </template>
             <template v-else>
-              <div v-html="renderMarkdown(msg.message)"></div>
+              <div v-html="renderMarkdown(msg.content)"></div>
             </template>
           </div>
         </div>
-        <img :src="msg.userFlag ? myAvatar : robotAvatar" :hidden="!msg.userFlag" alt="头像" class="avatar" />
+        <img :src="msg.role === 'user' ? myAvatar : robotAvatar" :hidden="msg.role === 'assistant'" alt="头像" class="avatar" />
       </div>
     </div>
-    <div class="quick-prompts" v-if="showPrompts">
+    <div class="quick-prompts" v-if="showPrompts && messages.length === 0">
       <div
         class="prompt"
         v-for="(prompt, index) in prompts"
@@ -36,14 +36,13 @@
       />
       <el-button @click="sendMessage">发送</el-button>
       <el-upload
-          action="http://localhost:8080/ollama/uploadImage"
+          action="http://localhost:8080/model/uploadImage"
           :headers="headers"
           :data="uploadData"
           :show-file-list="false"
           :on-success="handleImageUploadSuccess"
           :before-upload="beforeImageUpload"
       >
-        <el-button slot="trigger">上传图片</el-button>
       </el-upload>
     </div>
   </div>
@@ -62,11 +61,12 @@ import { useUserStore } from "../store/index.js";
 
 // 假设的头像图片路径
 const myAvatar = people;
-const url =  'http://localhost:8080';
+const url =  import.meta.env.VITE_API_URL || 'http://localhost:8080';
 const robotAvatar = robot;
 const messages = ref([]);
 const inputText = ref('');
-let conversationId = ref(1);
+const selectedModel = ref('deepseek');
+let conversationId = ref(null);
 const userStore = useUserStore();
 const props = defineProps({
   conversation: Object,
@@ -90,24 +90,33 @@ const selectPrompt = (prompt) => {
   sendMessage();
 };
 
-const fetchMessages = async (conversationId) => {
+const fetchMessages = async (sessionId) => {
   try {
-    const response = await getConversationMessages(conversationId);
+    const response = await getConversationMessages(sessionId);
     console.log('messages:', response.data)
-    messages.value = response.data;
+    if (response.data && response.data.length > 0) {
+      messages.value = response.data;
+    }
+    // 如果没有历史消息，显示提示
+    if (messages.value.length === 0) {
+      showPrompts.value = true;
+    }
   } catch (error) {
     console.error('Failed to fetch messages:', error);
   }
 };
 
 watch(props, (newVal) => {
-  console.log(newVal)
-  conversationId.value = newVal.conversation.sessionId
-  fetchMessages(newVal.conversation.sessionId)
+  if (newVal.conversation && newVal.conversation.sessionId) {
+    // 切换会话时先清空旧消息，避免残留
+    messages.value = [];
+    conversationId.value = newVal.conversation.sessionId
+    fetchMessages(newVal.conversation.sessionId)
+  }
 },{ immediate: true});
 
 const sendMessage = () => {
-  if (inputText.value.trim()) {
+  if (inputText.value.trim() && conversationId.value) {
     const newMessage = {
       userId: localStorage.getItem('userId'),
       message: inputText.value,
@@ -115,13 +124,20 @@ const sendMessage = () => {
       timestamp: Date.now(),
       userFlag: 1,
     };
-    messages.value.push(newMessage);
-    const BaseUrl = url+"/ollama/chatStream";
+    messages.value.push({
+      id: 'temp-' + Date.now(),
+      role: 'user',
+      content: inputText.value,
+      timestamp: Date.now()
+    });
+    showPrompts.value = false;
+    const BaseUrl = url+"/model/chatStream";
     const botMessage = {
+      id: 'temp-ai-' + Date.now(),
       userId: localStorage.getItem('userId'),
-      message: '',
+      role: 'assistant',
+      content: '',
       timestamp: Date.now(),
-      userFlag: 0,
     };
     let token = localStorage.getItem('token');
     messages.value.push(botMessage);
@@ -134,12 +150,16 @@ const sendMessage = () => {
       },
       body: JSON.stringify(newMessage),
       onmessage: (message)=>{
-        // 处理响应的数据，该数据是一段一段的
         console.log(message);
-        messages.value[messages.value.length-1].message = messages.value[messages.value.length-1].message + message.data;
+        if (message.data && message.data !== '[DONE]') {
+          messages.value[messages.value.length-1].content = messages.value[messages.value.length-1].content + message.data;
+        }
       },
       onerror: (err) => {
         console.log('Connection error', err);
+        if (messages.value.length > 0) {
+          messages.value[messages.value.length-1].content = 'AI服务暂时不可用，请稍后再试。';
+        }
       },
       onclose:()=> {
         console.log('Connection closed');
@@ -152,13 +172,16 @@ const sendMessage = () => {
 
 // 处理图片上传成功后的逻辑
 const handleImageUploadSuccess = (response, file, fileList) => {
+  if (!conversationId.value) return;
+  
   const newMessage = {
+    id: 'temp-' + Date.now(),
     userId: localStorage.getItem('userId'),
-    message: url+'/uploads/'+response.data, // 假设后端返回图片的URL
+    message: url+'/uploads/'+response.data,
     sessionId: conversationId.value,
     timestamp: Date.now(),
-    userFlag: 1,
-    type: 'image' // 添加类型字段标识为图片消息
+    role: 'user',
+    type: 'image'
   };
   messages.value.push(newMessage);
   sendImageMessage(newMessage);
@@ -166,12 +189,13 @@ const handleImageUploadSuccess = (response, file, fileList) => {
 
 // 发送图片消息
 const sendImageMessage = (newMessage) => {
-  const BaseUrl = "http://localhost:8080/ollama/chatImage";
+  const BaseUrl = url+"/model/chatImage";
   const botMessage = {
+    id: 'temp-ai-' + Date.now(),
     userId: localStorage.getItem('userId'),
-    message: '',
+    role: 'assistant',
+    content: '',
     timestamp: Date.now(),
-    userFlag: 0,
   };
   let token = localStorage.getItem('token');
   messages.value.push(botMessage);
@@ -181,14 +205,22 @@ const sendImageMessage = (newMessage) => {
       "Content-Type": "application/json",
       "Authorization": token
     },
-    body: JSON.stringify(newMessage),
+    body: JSON.stringify({
+      sessionId: conversationId.value,
+      userId: localStorage.getItem('userId'),
+      message: newMessage.message
+    }),
     onmessage: (message)=>{
-      // 处理响应的数据，该数据是一段一段的
       console.log(message);
-      messages.value[messages.value.length-1].message = messages.value[messages.value.length-1].message + message.data;
+      if (message.data && message.data !== '[DONE]') {
+        messages.value[messages.value.length-1].content = messages.value[messages.value.length-1].content + message.data;
+      }
     },
     onerror: (err) => {
       console.log('Connection error', err);
+      if (messages.value.length > 0) {
+        messages.value[messages.value.length-1].content = 'AI服务暂时不可用，请稍后再试。';
+      }
     },
     onclose:()=> {
       console.log('Connection closed');
@@ -223,9 +255,41 @@ const renderMarkdown = (text) => {
   const html = marked.parse(text);
   return DOMPurify.sanitize(html);
 };
+
+// 清空消息（当切换会话时）
+const clearMessages = () => {
+  messages.value = [];
+  showPrompts.value = true;
+};
+
+// 暴露方法给父组件
+defineExpose({
+  clearMessages
+});
 </script>
 
 <style scoped>
+.model-selector {
+  padding: 8px 15px;
+  background-color: #FFF5F5;
+  border-bottom: 1px solid #E0FFE0;
+}
+
+.model-selector :deep(.el-select) {
+  width: 150px;
+}
+
+.model-selector :deep(.el-input__inner) {
+  border-radius: 15px;
+  border: 1px solid #FFB6C1;
+  background-color: #FFF9F9;
+  height: 32px;
+  line-height: 32px;
+}
+
+.model-selector :deep(.el-input__inner:focus) {
+  border-color: #FF8C00;
+}
 .chat-box {
   display: flex;
   flex-direction: column;
@@ -294,11 +358,11 @@ const renderMarkdown = (text) => {
   white-space: nowrap;
   transition: all 0.2s ease;
   border-radius: 12px;
-  background-color: rgba(144, 238, 144, 0.3); /* 半透明淡绿 */
+  background-color: rgba(144, 238, 144, 0.3);
 }
 
 .prompt:hover {
-  background-color: rgba(144, 238, 144, 0.5); /* 悬停加深 */
+  background-color: rgba(144, 238, 144, 0.5);
   color: #333;
 }
 

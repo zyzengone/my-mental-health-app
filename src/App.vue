@@ -1,11 +1,11 @@
 <template>
   <div id="app">
     <!-- 导航栏，使用 router-link 进行导航 -->
-    <nav v-if="$route.path !== '/login'">
-      <div class="nav-left">
+    <nav v-if="!['/login', '/register'].includes($route.path)">
+        <div class="nav-left">
         <router-link to="/">首页</router-link>
         <router-link to="/chat">心理健康测评与聊天</router-link>
-        <router-link to="/knowledge-graph">医疗知识图谱</router-link>
+        <router-link to="/knowledge-graph">心理知识图谱</router-link>
         <router-link to="/admin">管理后台</router-link>
       </div>
       <div class="nav-right">
@@ -92,7 +92,7 @@ onMounted(() => {
 // Keep existing route watch as fallback
 watch(() => route.path, (newPath) => {
   if (newPath === '/chat' && userStore.isAuthenticated) {
-    userStore.updatePersonalityType()
+    userStore.fetchPersonalityType()
   }
 })
 

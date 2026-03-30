@@ -12,7 +12,10 @@
         @mouseover="showDeleteIcon = true"
         @mouseleave="showDeleteIcon = false"
     >
-      {{ '谈心'+conversation.id }}
+      <div class="conversation-item">
+        <div>谈心</div>
+        <div class="conversation-time">{{ conversation.createdAt }}</div>
+      </div>
       <el-button type="danger" class="icon-delete" circle :icon="Delete"  @click.stop="deleteConversation(conversation)"/>
     </el-menu-item>
   </el-menu>
@@ -49,9 +52,37 @@ const deleteConversation = conversation => {
 <style scoped>
 
 .el-menu-item {
-  color: #333; /* 设置文字颜色为深灰色 */
-  font-size: 16px; /* 设置字体大小 */
-  position: relative; /* 使删除图标相对定位 */
+  color: #5a5a5a; /* 调整为中等灰色 */
+  font-size: 16px;
+  position: relative;
+  height: auto;
+  line-height: 1.2;
+  padding: 8px 20px;
+  border: 1px solid #f0f0f0; /* 添加浅灰色边框 */
+  margin: 4px 0; /* 调整外边距 */
+}
+
+.conversation-item {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.conversation-time {
+  font-size: 12px;
+  color: #888; /* 调整为更深的灰色 */
+  margin-top: 0;
+  line-height: 1;
+}
+
+.el-menu-item:hover {
+  border-color: #e0e0e0; /* 悬停时边框变深 */
+  color: #333; /* 悬停时文字变深 */
+}
+
+.el-menu-item.is-active {
+  border-color: #d0d0d0; /* 激活状态边框更深 */
+  color: #222; /* 激活状态文字更深 */
 }
 
 .el-menu-item .icon-delete {
